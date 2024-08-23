@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Location Service Example'),
+          title: const Text('Speedometer App'),
         ),
         body: const LocationServiceWidget(),
       ),
@@ -29,16 +29,20 @@ class LocationServiceWidget extends StatefulWidget {
 }
 
 class _LocationServiceWidgetState extends State<LocationServiceWidget> {
+  // bools later for other files
+  bool isKMPH = false;
+  bool isDarkMode = false;
+
   Location location = Location();
   LocationData? _locationData;
 
   @override
   void initState() {
     super.initState();
-    _getLocation();
+    _initializeLocationService();
   }
 
-  Future<void> _getLocation() async {
+  Future<void> _initializeLocationService() async {
     try {
       bool serviceEnabled;
       PermissionStatus permissionGranted;
@@ -59,10 +63,26 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
         }
       }
 
-      _locationData = await location.getLocation();
-      setState(() {});
+      location.changeSettings(accuracy: LocationAccuracy.high, interval: 10);
+
+      // Listen to location updates
+      location.onLocationChanged.listen((LocationData currentLocation) {
+        setState(() {
+          _locationData = currentLocation;
+        });
+      });
     } catch (e) {
       print('Error: $e');
+    }
+  }
+
+  int _convertSpeed(double speedInMetersPerSecond) {
+    if (isKMPH) {
+      return (speedInMetersPerSecond * 3.6)
+          .round(); // Convert to kilometers per hour
+    } else {
+      return (speedInMetersPerSecond * 2.23694)
+          .round(); // Convert to miles per hour
     }
   }
 
@@ -76,7 +96,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
               children: [
                 Text(
                     'Location: ${_locationData!.latitude}, ${_locationData!.longitude}'),
-                Text("Speed: ${_locationData!.speed}"),
+                Text("Speed: ${_convertSpeed(_locationData!.speed!)} km/h"),
               ],
             ),
     );
