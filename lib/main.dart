@@ -29,38 +29,41 @@ class LocationServiceWidget extends StatefulWidget {
 }
 
 class _LocationServiceWidgetState extends State<LocationServiceWidget> {
-  LocationData? _locationData;
   Location location = Location();
+  LocationData? _locationData;
 
   @override
   void initState() {
     super.initState();
-    _checkLocationServiceAndPermission();
+    _getLocation();
   }
 
-  Future<void> _checkLocationServiceAndPermission() async {
-    // Check if location services are enabled
-    bool serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
+  Future<void> _getLocation() async {
+    try {
+      bool serviceEnabled;
+      PermissionStatus permissionGranted;
+
+      serviceEnabled = await location.serviceEnabled();
       if (!serviceEnabled) {
-        return;
+        serviceEnabled = await location.requestService();
+        if (!serviceEnabled) {
+          return;
+        }
       }
-    }
 
-    // Check for location permission
-    PermissionStatus permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        return;
+      permissionGranted = await location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) {
+          return;
+        }
       }
+
+      _locationData = await location.getLocation();
+      setState(() {});
+    } catch (e) {
+      print('Error: $e');
     }
-
-    // Get the current location data
-    _locationData = await location.getLocation();
-
-    setState(() {});
   }
 
   @override
