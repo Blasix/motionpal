@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
+import '../settings/logic/bools.dart';
+import '../settings/screens/main.dart';
 import 'speed_utils.dart';
 import 'speedometer.dart';
 
@@ -15,7 +17,6 @@ class LocationServiceWidget extends StatefulWidget {
 
 class _LocationServiceWidgetState extends State<LocationServiceWidget> {
   // bools later for other files
-  bool isKMPH = false;
   bool isDarkMode = false;
 
   // Tracker variables
@@ -79,7 +80,14 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
           )
         ],
       ),
@@ -94,9 +102,9 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
                 alignment: Alignment.center,
                 children: [
                   Speedometer(
-                      speed: convertSpeed(speed, isKMPH) * 1.0,
+                      speed: convertSpeed(speed, SettingsLogic.isKMPH) * 1.0,
                       maxSpeed: 240,
-                      isKMPH: isKMPH),
+                      isKMPH: SettingsLogic.isKMPH),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -105,12 +113,12 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            isKMPH ? "km/h" : "mph",
+                            SettingsLogic.isKMPH ? "km/h" : "mph",
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            "${convertSpeed(speed, isKMPH)}",
+                            "${convertSpeed(speed, SettingsLogic.isKMPH)}",
                             style: const TextStyle(
                                 fontSize: 52, fontWeight: FontWeight.bold),
                           ),
@@ -118,7 +126,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
                       ),
                       (totalDistance.round() > 0)
                           ? Text(
-                              "${convertDistance(totalDistance, getDistanceType(isKMPH, totalDistance))} ${getDistanceType(isKMPH, totalDistance).name}")
+                              "${convertDistance(totalDistance, getDistanceType(SettingsLogic.isKMPH, totalDistance))} ${getDistanceType(SettingsLogic.isKMPH, totalDistance).name}")
                           : const SizedBox(),
                     ],
                   ),
@@ -137,7 +145,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${convertSpeed(totalTime.inSeconds > 0 ? totalDistance / totalTime.inSeconds : 0, isKMPH)} ${isKMPH ? "km/h" : "mph"}",
+                      "${convertSpeed(totalTime.inSeconds > 0 ? totalDistance / totalTime.inSeconds : 0, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
                     ),
                   ],
                 ),
@@ -149,7 +157,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${convertSpeed(maxSpeed, isKMPH)} ${isKMPH ? "km/h" : "mph"}",
+                      "${convertSpeed(maxSpeed, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
                     ),
                   ],
                 )
