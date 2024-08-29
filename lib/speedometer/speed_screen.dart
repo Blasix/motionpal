@@ -89,98 +89,121 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.refresh),
-          onPressed: _resetData,
-        ),
-        title: const Text("Speedometer"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
-                ),
-              );
-            },
-          )
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+      body: SafeArea(
+        child: Stack(
           children: [
-            SizedBox(
-              width: 200,
-              height: 200,
-              child: Stack(
-                alignment: Alignment.center,
+            Align(
+              alignment: Alignment.topLeft,
+              child: Column(
                 children: [
-                  Speedometer(
-                    speed: convertSpeed(speed, SettingsLogic.isKMPH).toDouble(),
-                    maxSpeed: 240,
+                  IconButton(
+                    iconSize: 32,
+                    icon: const Icon(Icons.refresh),
+                    onPressed: _resetData,
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      const SizedBox(),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            SettingsLogic.isKMPH ? "km/h" : "mph",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "${convertSpeed(speed, SettingsLogic.isKMPH)}",
-                            style: const TextStyle(
-                                fontSize: 52, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      (totalDistance.round() > 0)
-                          ? Text(
-                              "${convertDistance(totalDistance, getDistanceType(SettingsLogic.isKMPH, totalDistance))} ${getDistanceType(SettingsLogic.isKMPH, totalDistance).name}")
-                          : const SizedBox(),
-                    ],
+                  IconButton(
+                    iconSize: 32,
+                    icon: const Icon(Icons.show_chart_rounded),
+                    onPressed: () {
+                      // Replace spedometer with chart
+                    },
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    const Text(
-                      "Average Speed",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                iconSize: 32,
+                icon: const Icon(Icons.settings),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
                     ),
-                    Text(
-                      "${convertSpeed(totalTime.inSeconds > 0 ? totalDistance / totalTime.inSeconds : 0, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
+                  );
+                },
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Speedometer(
+                          speed: convertSpeed(speed, SettingsLogic.isKMPH)
+                              .toDouble(),
+                          maxSpeed: 240,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            const SizedBox(),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  SettingsLogic.isKMPH ? "km/h" : "mph",
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "${convertSpeed(speed, SettingsLogic.isKMPH)}",
+                                  style: const TextStyle(
+                                      fontSize: 52,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            (totalDistance.round() > 0)
+                                ? Text(
+                                    "${convertDistance(totalDistance, getDistanceType(SettingsLogic.isKMPH, totalDistance))} ${getDistanceType(SettingsLogic.isKMPH, totalDistance).name}")
+                                : const SizedBox(),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    const Text(
-                      "Max Speed",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "${convertSpeed(maxSpeed, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
-                    ),
-                  ],
-                )
-              ],
-            )
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        children: [
+                          const Text(
+                            "Average Speed",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "${convertSpeed(totalTime.inSeconds > 0 ? totalDistance / totalTime.inSeconds : 0, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text(
+                            "Max Speed",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "${convertSpeed(maxSpeed, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
+                          ),
+                        ],
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
