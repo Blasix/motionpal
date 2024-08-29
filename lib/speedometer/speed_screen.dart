@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
   // Tracker variables
   double speed = 0; // M/s
   double totalDistance = 0; // Meters
+  // DateTime? startTime;
   Duration totalTime = Duration.zero; // Seconds
   double maxSpeed = 0; // M/s
   double averageSpeed = 0; // M/s
@@ -64,6 +66,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
           totalDistance += speed;
           maxSpeed = max(maxSpeed, speed);
           if (speed > 0) {
+            // startTime ??= DateTime.now();
             totalTime += const Duration(seconds: 1);
           }
         });
@@ -73,10 +76,25 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
     }
   }
 
+  void _resetData() {
+    setState(() {
+      speed = 0;
+      totalDistance = 0;
+      totalTime = Duration.zero;
+      maxSpeed = 0;
+      averageSpeed = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.refresh),
+          onPressed: _resetData,
+        ),
+        title: const Text("Speedometer"),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -102,9 +120,9 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
                 alignment: Alignment.center,
                 children: [
                   Speedometer(
-                      speed: convertSpeed(speed, SettingsLogic.isKMPH) * 1.0,
-                      maxSpeed: 240,
-                      isKMPH: SettingsLogic.isKMPH),
+                    speed: convertSpeed(speed, SettingsLogic.isKMPH).toDouble(),
+                    maxSpeed: 240,
+                  ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -166,27 +184,6 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class Speedometer extends StatelessWidget {
-  final double speed;
-  final double maxSpeed;
-  final bool isKMPH;
-
-  const Speedometer({
-    super.key,
-    required this.speed,
-    required this.maxSpeed,
-    required this.isKMPH,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(200, 200), // Adjust size according to your design
-      painter: SpeedometerPainter(speed: speed, maxSpeed: maxSpeed),
     );
   }
 }
