@@ -4,9 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
-import '../settings/logic/bools.dart';
 import '../settings/screens/main.dart';
-import 'speed_utils.dart';
 import 'speedometer.dart';
 
 class LocationServiceWidget extends StatefulWidget {
@@ -17,9 +15,6 @@ class LocationServiceWidget extends StatefulWidget {
 }
 
 class _LocationServiceWidgetState extends State<LocationServiceWidget> {
-  // bools later for other files
-  bool isDarkMode = false;
-
   // Tracker variables
   double speed = 0; // M/s
   double totalDistance = 0; // Meters
@@ -127,81 +122,11 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
               ),
             ),
             Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Speedometer(
-                          speed: convertSpeed(speed, SettingsLogic.isKMPH)
-                              .toDouble(),
-                          maxSpeed: 240,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const SizedBox(),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  SettingsLogic.isKMPH ? "km/h" : "mph",
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  "${convertSpeed(speed, SettingsLogic.isKMPH)}",
-                                  style: const TextStyle(
-                                      fontSize: 52,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            (totalDistance.round() > 0)
-                                ? Text(
-                                    "${convertDistance(totalDistance, getDistanceType(SettingsLogic.isKMPH, totalDistance))} ${getDistanceType(SettingsLogic.isKMPH, totalDistance).name}")
-                                : const SizedBox(),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        children: [
-                          const Text(
-                            "Average Speed",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "${convertSpeed(totalTime.inSeconds > 0 ? totalDistance / totalTime.inSeconds : 0, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          const Text(
-                            "Max Speed",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "${convertSpeed(maxSpeed, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
-                          ),
-                        ],
-                      )
-                    ],
-                  )
-                ],
+              child: SpeedometerWidget(
+                speed: speed,
+                totalDistance: totalDistance,
+                totalTime: totalTime,
+                maxSpeed: maxSpeed,
               ),
             ),
           ],

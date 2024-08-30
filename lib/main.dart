@@ -11,8 +11,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: LocationServiceWidget(),
+    return MaterialApp(
+      darkTheme: ThemeData.dark().copyWith(
+        primaryColor: Colors.deepOrange,
+      ),
+      theme: ThemeData.light().copyWith(
+        primaryColor: Colors.orange,
+      ),
+      themeMode: ThemeMode.system,
+      home: const LocationServiceWidget(),
     );
   }
 }

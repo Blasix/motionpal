@@ -1,5 +1,142 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import '../settings/logic/bools.dart';
+import 'speed_utils.dart';
+
+class SpeedometerWidget extends StatelessWidget {
+  final double speed;
+  final double totalDistance;
+  final Duration totalTime;
+  final double maxSpeed;
+
+  const SpeedometerWidget(
+      {super.key,
+      required this.speed,
+      required this.totalDistance,
+      required this.totalTime,
+      required this.maxSpeed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 200,
+          height: 200,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Speedometer(
+                speed: convertSpeed(speed, SettingsLogic.isKMPH).toDouble(),
+                maxSpeed: 240,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const SizedBox(),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        SettingsLogic.isKMPH ? "km/h" : "mph",
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      AnimatedNumber(
+                        duration: const Duration(milliseconds: 500),
+                        value: convertSpeed(speed, SettingsLogic.isKMPH),
+                        style: const TextStyle(
+                            fontSize: 52, fontWeight: FontWeight.bold),
+                      ),
+                      // Text(
+                      //   "${convertSpeed(speed, SettingsLogic.isKMPH)}",
+                      //   style: const TextStyle(
+                      //       fontSize: 52,
+                      //       fontWeight: FontWeight.bold),
+                      // ),
+                    ],
+                  ),
+                  (totalDistance.round() > 0)
+                      ? Text(
+                          "${convertDistance(totalDistance, getDistanceType(SettingsLogic.isKMPH, totalDistance))} ${getDistanceType(SettingsLogic.isKMPH, totalDistance).name}")
+                      : const SizedBox(),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children: [
+                const Text(
+                  "Average Speed",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "${convertSpeed(totalTime.inSeconds > 0 ? totalDistance / totalTime.inSeconds : 0, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                const Text(
+                  "Max Speed",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "${convertSpeed(maxSpeed, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+    );
+  }
+}
+
+class AnimatedNumber extends ImplicitlyAnimatedWidget {
+  final int value;
+  final TextStyle? style;
+  const AnimatedNumber({
+    super.key,
+    required super.duration,
+    required this.value,
+    this.style,
+  });
+
+  @override
+  ImplicitlyAnimatedWidgetState<AnimatedNumber> createState() =>
+      _AnimatedNumberState();
+}
+
+class _AnimatedNumberState extends AnimatedWidgetBaseState<AnimatedNumber> {
+  late IntTween _counter;
+
+  @override
+  void initState() {
+    _counter = IntTween(begin: widget.value, end: widget.value);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('${_counter.evaluate(animation)}', style: widget.style);
+  }
+
+  @override
+  void forEachTween(TweenVisitor<dynamic> visitor) {
+    _counter = visitor(
+      _counter,
+      widget.value,
+      (dynamic value) => IntTween(begin: value),
+    ) as IntTween;
+  }
+}
 
 class Speedometer extends StatefulWidget {
   final double speed;
@@ -78,6 +215,7 @@ class SpeedometerState extends State<Speedometer>
       painter: SpeedometerPainter(
         speedFraction: _animation.value,
         maxSpeed: widget.maxSpeed,
+        context: context,
       ),
     );
   }
@@ -86,8 +224,12 @@ class SpeedometerState extends State<Speedometer>
 class SpeedometerPainter extends CustomPainter {
   final double speedFraction;
   final double maxSpeed;
+  final BuildContext context;
 
-  SpeedometerPainter({required this.speedFraction, required this.maxSpeed});
+  SpeedometerPainter(
+      {required this.speedFraction,
+      required this.maxSpeed,
+      required this.context});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -99,7 +241,7 @@ class SpeedometerPainter extends CustomPainter {
 
     // Draw the background arc
     Paint arcPaint = Paint()
-      ..color = Colors.grey.shade300
+      ..color = Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 15
       ..strokeCap = StrokeCap.round;
@@ -114,7 +256,7 @@ class SpeedometerPainter extends CustomPainter {
 
     // Draw the filled arc (representing speed)
     Paint progressPaint = Paint()
-      ..color = Colors.blue
+      ..color = Theme.of(context).primaryColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 15
       ..strokeCap = StrokeCap.round;
@@ -126,26 +268,6 @@ class SpeedometerPainter extends CustomPainter {
       false,
       progressPaint,
     );
-
-    // // Draw the speed indicator (needle)
-    // Paint needlePaint = Paint()
-    //   ..color = Colors.red
-    //   ..strokeWidth = 2;
-
-    // double needleLength = radius - 15;
-    // Offset needleEnd = Offset(
-    //   center.dx + needleLength * cos(currentAngle),
-    //   center.dy + needleLength * sin(currentAngle),
-    // );
-
-    // canvas.drawLine(center, needleEnd, needlePaint);
-
-    // // Draw the center circle
-    // Paint centerCirclePaint = Paint()
-    //   ..color = Colors.black
-    //   ..style = PaintingStyle.fill;
-
-    // canvas.drawCircle(center, 5, centerCirclePaint);
   }
 
   @override
