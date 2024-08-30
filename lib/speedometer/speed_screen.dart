@@ -26,7 +26,6 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
   double averageSpeed = 0; // M/s
 
   final List<FlSpot> _speedData = [];
-  int _timeCounter = 0;
 
   Location location = Location();
 
@@ -65,8 +64,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
           speed = currentLocation.speed ?? 0;
           totalDistance += speed;
           maxSpeed = max(maxSpeed, speed);
-          _speedData.add(FlSpot(_timeCounter.toDouble(), speed));
-          _timeCounter++;
+          _speedData.add(FlSpot(_speedData.length.toDouble(), speed));
           if (speed > 0) {
             // startTime ??= DateTime.now();
             totalTime += const Duration(seconds: 1);
@@ -85,6 +83,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
       totalTime = Duration.zero;
       maxSpeed = 0;
       averageSpeed = 0;
+      _speedData.clear();
     });
   }
 
@@ -94,6 +93,18 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
       body: SafeArea(
         child: Stack(
           children: [
+            Center(
+              child: SettingsLogic.isChart
+                  ? SpeedChartWidget(
+                      speedData: _speedData,
+                    )
+                  : SpeedometerWidget(
+                      speed: speed,
+                      totalDistance: totalDistance,
+                      totalTime: totalTime,
+                      maxSpeed: maxSpeed,
+                    ),
+            ),
             Align(
               alignment: Alignment.topLeft,
               child: Column(
@@ -131,18 +142,6 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
                   );
                 },
               ),
-            ),
-            Center(
-              child: SettingsLogic.isChart
-                  ? SpeedChartWidget(
-                      speedData: _speedData,
-                    )
-                  : SpeedometerWidget(
-                      speed: speed,
-                      totalDistance: totalDistance,
-                      totalTime: totalTime,
-                      maxSpeed: maxSpeed,
-                    ),
             ),
           ],
         ),
