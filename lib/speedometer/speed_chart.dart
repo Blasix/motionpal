@@ -1,17 +1,18 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:motionpal/settings/logic/bools.dart';
 
-import 'speed_utils.dart';
-
-class SpeedChartWidget extends StatelessWidget {
+class SpeedChartWidget extends ConsumerWidget {
   final List<FlSpot> speedData;
 
   const SpeedChartWidget({super.key, required this.speedData});
 
   @override
-  Widget build(BuildContext context) {
-    List<FlSpot> modifiedSpeedData = SettingsLogic.isKMPH
+  Widget build(BuildContext context, WidgetRef ref) {
+    bool isKMPH = ref.watch(isKMPHProvider);
+
+    List<FlSpot> modifiedSpeedData = isKMPH
         ? speedData
             .map(
               (spot) => FlSpot(spot.x, (spot.y * 3.6)
@@ -45,7 +46,12 @@ class SpeedChartWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         AspectRatio(
-            aspectRatio: 1, child: SpeedChart(speedData: modifiedSpeedData)),
+          aspectRatio: 1,
+          child: SpeedChart(
+            speedData: modifiedSpeedData,
+            isKMPH: isKMPH,
+          ),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -60,7 +66,7 @@ class SpeedChartWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${modifiedSpeedData.isNotEmpty ? modifiedSpeedData.map((spot) => spot.y).reduce((a, b) => a < b ? a : b).toStringAsFixed(2) : 0} ${SettingsLogic.isKMPH ? 'km/h' : 'mph'}',
+                  '${modifiedSpeedData.isNotEmpty ? modifiedSpeedData.map((spot) => spot.y).reduce((a, b) => a < b ? a : b).toStringAsFixed(2) : 0} ${isKMPH ? 'km/h' : 'mph'}',
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontSize: 15,
@@ -79,7 +85,7 @@ class SpeedChartWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${modifiedSpeedData.isNotEmpty ? (modifiedSpeedData.map((spot) => spot.y).reduce((a, b) => a + b) / modifiedSpeedData.length).toStringAsFixed(2) : 0} ${SettingsLogic.isKMPH ? 'km/h' : 'mph'}',
+                  '${modifiedSpeedData.isNotEmpty ? (modifiedSpeedData.map((spot) => spot.y).reduce((a, b) => a + b) / modifiedSpeedData.length).toStringAsFixed(2) : 0} ${isKMPH ? 'km/h' : 'mph'}',
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontSize: 15,
@@ -98,7 +104,7 @@ class SpeedChartWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${modifiedSpeedData.isNotEmpty ? modifiedSpeedData.map((spot) => spot.y).reduce((a, b) => a > b ? a : b).toStringAsFixed(2) : 0} ${SettingsLogic.isKMPH ? 'km/h' : 'mph'}',
+                  '${modifiedSpeedData.isNotEmpty ? modifiedSpeedData.map((spot) => spot.y).reduce((a, b) => a > b ? a : b).toStringAsFixed(2) : 0} ${isKMPH ? 'km/h' : 'mph'}',
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontSize: 15,
@@ -115,8 +121,9 @@ class SpeedChartWidget extends StatelessWidget {
 
 class SpeedChart extends StatelessWidget {
   final List<FlSpot> speedData;
+  final bool isKMPH;
 
-  const SpeedChart({super.key, required this.speedData});
+  const SpeedChart({super.key, required this.speedData, required this.isKMPH});
 
   @override
   Widget build(BuildContext context) {
@@ -152,11 +159,14 @@ class SpeedChart extends StatelessWidget {
             }).toList();
           },
           touchTooltipData: LineTouchTooltipData(
+            getTooltipColor: (touchedSpot) {
+              return Theme.of(context).cardColor;
+            },
             getTooltipItems: (touchedSpots) {
               return touchedSpots
                   .map(
                     (touchedSpot) => LineTooltipItem(
-                      '${touchedSpot.y.toStringAsFixed(2)} ${SettingsLogic.isKMPH ? 'km/h' : 'mph'}',
+                      '${touchedSpot.y.toStringAsFixed(2)} ${isKMPH ? 'km/h' : 'mph'}',
                       TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold,

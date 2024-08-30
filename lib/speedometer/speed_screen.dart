@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
 import '../settings/logic/bools.dart';
-import '../settings/screens/main.dart';
+import '../settings/screens/settings.dart';
 import 'speed_chart.dart';
 import 'speedometer.dart';
 
@@ -94,6 +94,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
         child: Stack(
           children: [
             Center(
+                child: SingleChildScrollView(
               child: SettingsLogic.isChart
                   ? SpeedChartWidget(
                       speedData: _speedData,
@@ -104,7 +105,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
                       totalTime: totalTime,
                       maxSpeed: maxSpeed,
                     ),
-            ),
+            )),
             Align(
               alignment: Alignment.topLeft,
               child: Column(

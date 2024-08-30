@@ -24,8 +24,17 @@ class SettingsButton extends StatelessWidget {
       height: 55,
       margin: const EdgeInsets.symmetric(horizontal: 40).copyWith(bottom: 20),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: Theme.of(context).cardColor),
+        borderRadius: BorderRadius.circular(30),
+        color: Theme.of(context).cardColor,
+        boxShadow: [
+          if (Theme.of(context).brightness == Brightness.light)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+        ],
+      ),
       child: InkWell(
         onTap: () {
           onPressed(context);
@@ -93,8 +102,17 @@ class SettingsSwitchButton extends StatelessWidget {
       height: 55,
       margin: const EdgeInsets.symmetric(horizontal: 40).copyWith(bottom: 20),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: Theme.of(context).cardColor),
+        borderRadius: BorderRadius.circular(30),
+        color: Theme.of(context).cardColor,
+        boxShadow: [
+          if (Theme.of(context).brightness == Brightness.light)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+        ],
+      ),
       child: InkWell(
         onTap: () {
           // Optional: You could toggle the switch on tap if desired
@@ -161,6 +179,14 @@ class SettingsToggleButtons extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         color: Theme.of(context).cardColor,
+        boxShadow: [
+          if (Theme.of(context).brightness == Brightness.light)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

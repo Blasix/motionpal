@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 import '../settings/logic/bools.dart';
 import 'speed_utils.dart';
 
-class SpeedometerWidget extends StatelessWidget {
+class SpeedometerWidget extends ConsumerWidget {
   final double speed;
   final double totalDistance;
   final Duration totalTime;
@@ -17,7 +18,8 @@ class SpeedometerWidget extends StatelessWidget {
       required this.maxSpeed});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    bool isKMPH = ref.watch(isKMPHProvider);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -28,7 +30,7 @@ class SpeedometerWidget extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               Speedometer(
-                speed: convertSpeed(speed, SettingsLogic.isKMPH).toDouble(),
+                speed: convertSpeed(speed, isKMPH).toDouble(),
                 maxSpeed: 240,
               ),
               Column(
@@ -39,18 +41,18 @@ class SpeedometerWidget extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        SettingsLogic.isKMPH ? "km/h" : "mph",
+                        isKMPH ? "km/h" : "mph",
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       AnimatedNumber(
                         duration: const Duration(milliseconds: 500),
-                        value: convertSpeed(speed, SettingsLogic.isKMPH),
+                        value: convertSpeed(speed, isKMPH),
                         style: const TextStyle(
                             fontSize: 52, fontWeight: FontWeight.bold),
                       ),
                       // Text(
-                      //   "${convertSpeed(speed, SettingsLogic.isKMPH)}",
+                      //   "${convertSpeed(speed, isKMPH)}",
                       //   style: const TextStyle(
                       //       fontSize: 52,
                       //       fontWeight: FontWeight.bold),
@@ -59,7 +61,7 @@ class SpeedometerWidget extends StatelessWidget {
                   ),
                   (totalDistance.round() > 0)
                       ? Text(
-                          "${convertDistance(totalDistance, getDistanceType(SettingsLogic.isKMPH, totalDistance))} ${getDistanceType(SettingsLogic.isKMPH, totalDistance).name}")
+                          "${convertDistance(totalDistance, getDistanceType(isKMPH, totalDistance))} ${getDistanceType(isKMPH, totalDistance).name}")
                       : const SizedBox(),
                 ],
               ),
@@ -77,7 +79,7 @@ class SpeedometerWidget extends StatelessWidget {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "${convertSpeed(totalTime.inSeconds > 0 ? totalDistance / totalTime.inSeconds : 0, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
+                  "${convertSpeed(totalTime.inSeconds > 0 ? totalDistance / totalTime.inSeconds : 0, isKMPH)} ${isKMPH ? "km/h" : "mph"}",
                 ),
               ],
             ),
@@ -88,7 +90,7 @@ class SpeedometerWidget extends StatelessWidget {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "${convertSpeed(maxSpeed, SettingsLogic.isKMPH)} ${SettingsLogic.isKMPH ? "km/h" : "mph"}",
+                  "${convertSpeed(maxSpeed, isKMPH)} ${isKMPH ? "km/h" : "mph"}",
                 ),
               ],
             )
