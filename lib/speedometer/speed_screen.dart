@@ -1,10 +1,12 @@
-import 'dart:async';
 import 'dart:math';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
+import '../settings/logic/bools.dart';
 import '../settings/screens/main.dart';
+import 'speed_chart.dart';
 import 'speedometer.dart';
 
 class LocationServiceWidget extends StatefulWidget {
@@ -22,6 +24,9 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
   Duration totalTime = Duration.zero; // Seconds
   double maxSpeed = 0; // M/s
   double averageSpeed = 0; // M/s
+
+  final List<FlSpot> _speedData = [];
+  int _timeCounter = 0;
 
   Location location = Location();
 
@@ -60,6 +65,8 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
           speed = currentLocation.speed ?? 0;
           totalDistance += speed;
           maxSpeed = max(maxSpeed, speed);
+          _speedData.add(FlSpot(_timeCounter.toDouble(), speed));
+          _timeCounter++;
           if (speed > 0) {
             // startTime ??= DateTime.now();
             totalTime += const Duration(seconds: 1);
@@ -98,9 +105,13 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
                   ),
                   IconButton(
                     iconSize: 32,
-                    icon: const Icon(Icons.show_chart_rounded),
+                    icon: SettingsLogic.isChart
+                        ? const Icon(Icons.speed)
+                        : const Icon(Icons.show_chart_rounded),
                     onPressed: () {
-                      // Replace spedometer with chart
+                      setState(() {
+                        SettingsLogic.isChart = !SettingsLogic.isChart;
+                      });
                     },
                   ),
                 ],
@@ -122,12 +133,16 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
               ),
             ),
             Center(
-              child: SpeedometerWidget(
-                speed: speed,
-                totalDistance: totalDistance,
-                totalTime: totalTime,
-                maxSpeed: maxSpeed,
-              ),
+              child: SettingsLogic.isChart
+                  ? SpeedChartWidget(
+                      speedData: _speedData,
+                    )
+                  : SpeedometerWidget(
+                      speed: speed,
+                      totalDistance: totalDistance,
+                      totalTime: totalTime,
+                      maxSpeed: maxSpeed,
+                    ),
             ),
           ],
         ),
