@@ -6,7 +6,7 @@ const kTitleTextStyle = TextStyle(
 );
 
 class SettingsButton extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String text;
   final Function onPressed;
   final bool hasNavgigation;
@@ -44,10 +44,7 @@ class SettingsButton extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: Row(
             children: [
-              Icon(
-                icon,
-                size: 30,
-              ),
+              icon,
               const SizedBox(
                 width: 8,
               ),
