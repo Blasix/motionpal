@@ -1,5 +1,5 @@
-name: motionpal
-description: "A new Flutter project."
+name: speedometer
+description: "A speedometer app that displays the speed of the user."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -58,8 +58,9 @@ dev_dependencies:
 
 flutter_launcher_icons:
   ios: true
+  remove_alpha_ios: true
   android: true
-  image_path: "assets/images/logo/speedometer.png"
+  image_path: "assets/images/logo/speedometer_center.png"
   adaptive_icon_background: "#1B1B1B"
   adaptive_icon_foreground: "assets/images/logo/speedometer_android.png"
 

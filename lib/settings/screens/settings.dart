@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location/location.dart';
-import 'package:motionpal/settings/logic/bools.dart';
 import 'package:simple_icons/simple_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../logic/bools.dart';
 import '../logic/themes.dart';
 import '../widgets/buttons.dart';
 
