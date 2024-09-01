@@ -25,7 +25,7 @@ final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>(
     (ref) => ThemeModeNotifier());
 
 ThemeData darkTheme = ThemeData(
-  primaryColor: Colors.deepOrange,
+  primaryColor: Colors.teal,
   useMaterial3: true,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
@@ -52,7 +52,7 @@ ThemeData darkTheme = ThemeData(
 );
 
 ThemeData lightTheme = ThemeData(
-  primaryColor: Colors.orange,
+  primaryColor: Colors.teal,
   useMaterial3: true,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(

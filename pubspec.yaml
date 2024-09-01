@@ -39,6 +39,7 @@ dependencies:
   fl_chart: ^0.69.0
   flutter_riverpod: ^2.5.1
   shared_preferences: ^2.3.2
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +53,19 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   custom_lint: ^0.6.5
   riverpod_lint: ^2.3.13
+  flutter_launcher_icons: "^0.13.1"
+  flutter_native_splash: ^2.4.1
+
+flutter_launcher_icons:
+  ios: true
+  android: true
+  image_path: "assets/images/logo/speedometer.png"
+  adaptive_icon_background: "#1B1B1B"
+  adaptive_icon_foreground: "assets/images/logo/speedometer_android.png"
+
+flutter_native_splash:
+  color: "#1B1B1B"
+  image: "assets/images/logo/speedometer_center_nobg.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
