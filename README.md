@@ -1,16 +1,12 @@
-# motionpal
+<img align="right" height="100" src="assets/images/logo/speedometer_center_nobg.png">
 
-A new Flutter project.
+# Speedometer
 
-## Getting Started
+A simple and easy to use Speedometer app for your phone.
 
-This project is a starting point for a Flutter application.
+It's a simple app that shows your current speed in km/h or mph, it also shows you a graph of your speed over time.
 
-A few resources to get you started if this is your first Flutter project:
+## Support
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **[Support Server](https://discord.gg/73fj8ez9nC)**
+- **[Send a mail](https://blasix.com/contact)**

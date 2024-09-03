@@ -48,7 +48,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
 
       permissionGranted = await location.hasPermission();
-      if (permissionGranted == PermissionStatus.denied) {
+      if (permissionGranted != PermissionStatus.granted &&
+          permissionGranted != PermissionStatus.grantedLimited) {
         setState(() {
           _locationLedColor = Colors.orange;
           _locationLedText = 'Location permission is denied';
@@ -92,7 +93,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               text: 'Github Repo',
               onPressed: (context) async {
                 await launchUrl(
-                    Uri.parse('https://github.com/Blasix/motionpal'));
+                    Uri.parse('https://github.com/Blasix/speedometer'));
               },
             ),
             SettingsButton(
