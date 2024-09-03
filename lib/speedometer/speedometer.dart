@@ -7,14 +7,14 @@ import 'speed_utils.dart';
 class SpeedometerWidget extends ConsumerWidget {
   final double speed;
   final double totalDistance;
-  final Duration totalTime;
+  final int count;
   final double maxSpeed;
 
   const SpeedometerWidget(
       {super.key,
       required this.speed,
       required this.totalDistance,
-      required this.totalTime,
+      required this.count,
       required this.maxSpeed});
 
   @override
@@ -79,7 +79,7 @@ class SpeedometerWidget extends ConsumerWidget {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "${convertSpeed(totalTime.inSeconds > 0 ? totalDistance / totalTime.inSeconds : 0, isKMPH)} ${isKMPH ? "km/h" : "mph"}",
+                  "${convertSpeed(count > 0 ? totalDistance / count : 0, isKMPH)} ${isKMPH ? "km/h" : "mph"}",
                 ),
               ],
             ),

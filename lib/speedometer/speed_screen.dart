@@ -22,7 +22,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
   double speed = 0; // M/s
   double totalDistance = 0; // Meters
   // DateTime? startTime;
-  Duration totalTime = Duration.zero; // Seconds
+  int count = 0; // Seconds
   double maxSpeed = 0; // M/s
   double averageSpeed = 0; // M/s
 
@@ -102,14 +102,16 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
           speed = 0;
           return;
         }
-        speed = position.speed;
-        totalDistance += speed;
-        maxSpeed = max(maxSpeed, speed);
-        _speedData.add(FlSpot(_speedData.length.toDouble(), speed));
-        if (speed > 0) {
-          // startTime ??= DateTime.now();
-          totalTime += const Duration(seconds: 1);
-        }
+        setState(() {
+          speed = position.speed;
+          totalDistance += speed;
+          maxSpeed = max(maxSpeed, speed);
+          _speedData.add(FlSpot(_speedData.length.toDouble(), speed));
+          if (speed > 0) {
+            // startTime ??= DateTime.now();
+            count++;
+          }
+        });
       });
 
       // location.changeSettings(accuracy: LocationAccuracy.high);
@@ -136,7 +138,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
     setState(() {
       speed = 0;
       totalDistance = 0;
-      totalTime = Duration.zero;
+      count = 0;
       maxSpeed = 0;
       averageSpeed = 0;
       _speedData.clear();
@@ -158,7 +160,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
                   : SpeedometerWidget(
                       speed: speed,
                       totalDistance: totalDistance,
-                      totalTime: totalTime,
+                      count: count,
                       maxSpeed: maxSpeed,
                     ),
             )),
