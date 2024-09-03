@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location/location.dart';
 import 'package:simple_icons/simple_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,63 +13,58 @@ List<bool> _getThemeModeBools(ThemeMode selectedThemeMode) {
   });
 }
 
-class SettingsScreen extends ConsumerStatefulWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
-  @override
-  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
-}
+  // Color _locationLedColor = Colors.grey;
+  // String _locationLedText = 'Loading...';
 
-class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  Color _locationLedColor = Colors.grey;
-  String _locationLedText = 'Loading...';
+  // @override
+  // void initState() {
+  //   _updateLocationLedColor();
+  //   super.initState();
+  // }
 
-  @override
-  void initState() {
-    _updateLocationLedColor();
-    super.initState();
-  }
+  // Future<void> _updateLocationLedColor() async {
+  //   try {
+  //     Location location = Location();
 
-  Future<void> _updateLocationLedColor() async {
-    try {
-      Location location = Location();
+  //     bool serviceEnabled;
+  //     PermissionStatus permissionGranted;
 
-      bool serviceEnabled;
-      PermissionStatus permissionGranted;
+  //     serviceEnabled = await location.serviceEnabled();
+  //     if (!serviceEnabled) {
+  //       setState(() {
+  //         _locationLedColor = const Color.fromARGB(255, 255, 17, 0);
+  //         _locationLedText = 'Location service is disabled';
+  //       });
+  //       return;
+  //     }
 
-      serviceEnabled = await location.serviceEnabled();
-      if (!serviceEnabled) {
-        setState(() {
-          _locationLedColor = const Color.fromARGB(255, 255, 17, 0);
-          _locationLedText = 'Location service is disabled';
-        });
-        return;
-      }
+  //     permissionGranted = await location.hasPermission();
+  //     if (permissionGranted != PermissionStatus.granted &&
+  //         permissionGranted != PermissionStatus.grantedLimited) {
+  //       setState(() {
+  //         _locationLedColor = Colors.orange;
+  //         _locationLedText = 'Location permission is denied';
+  //       });
+  //       return;
+  //     }
 
-      permissionGranted = await location.hasPermission();
-      if (permissionGranted != PermissionStatus.granted &&
-          permissionGranted != PermissionStatus.grantedLimited) {
-        setState(() {
-          _locationLedColor = Colors.orange;
-          _locationLedText = 'Location permission is denied';
-        });
-        return;
-      }
-
-      setState(() {
-        _locationLedColor = const Color.fromARGB(255, 0, 255, 8);
-        _locationLedText = 'Location service is enabled';
-      });
-    } catch (e) {
-      setState(() {
-        _locationLedColor = const Color.fromARGB(255, 255, 17, 0);
-        _locationLedText = 'Error: $e';
-      });
-    }
-  }
+  //     setState(() {
+  //       _locationLedColor = const Color.fromARGB(255, 0, 255, 8);
+  //       _locationLedText = 'Location service is enabled';
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       _locationLedColor = const Color.fromARGB(255, 255, 17, 0);
+  //       _locationLedText = 'Error: $e';
+  //     });
+  //   }
+  // }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     ThemeMode themeMode = ref.watch(themeModeProvider);
     bool isKMPH = ref.watch(isKMPHProvider);
 
@@ -96,44 +90,44 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Uri.parse('https://github.com/Blasix/speedometer'));
               },
             ),
-            SettingsButton(
-              icon: Container(
-                margin: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _locationLedColor,
-                  boxShadow: [
-                    if (!(_locationLedColor == Colors.grey))
-                      BoxShadow(
-                        color: _locationLedColor.withOpacity(0.8),
-                        spreadRadius: 3,
-                        blurRadius: 3,
-                      ),
-                  ],
-                ),
-                width: 26,
-                height: 26,
-              ),
-              text: 'Location Service',
-              onPressed: (context) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text(_locationLedText),
-                      actions: [
-                        TextButton(
-                          child: const Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
+            // SettingsButton(
+            //   icon: Container(
+            //     margin: const EdgeInsets.all(3),
+            //     decoration: BoxDecoration(
+            //       shape: BoxShape.circle,
+            //       color: _locationLedColor,
+            //       boxShadow: [
+            //         if (!(_locationLedColor == Colors.grey))
+            //           BoxShadow(
+            //             color: _locationLedColor.withOpacity(0.8),
+            //             spreadRadius: 3,
+            //             blurRadius: 3,
+            //           ),
+            //       ],
+            //     ),
+            //     width: 26,
+            //     height: 26,
+            //   ),
+            //   text: 'Location Service',
+            //   onPressed: (context) {
+            //     showDialog(
+            //       context: context,
+            //       builder: (BuildContext context) {
+            //         return AlertDialog(
+            //           title: Text(_locationLedText),
+            //           actions: [
+            //             TextButton(
+            //               child: const Text('OK'),
+            //               onPressed: () {
+            //                 Navigator.of(context).pop();
+            //               },
+            //             ),
+            //           ],
+            //         );
+            //       },
+            //     );
+            //   },
+            // ),
             //settings switch button for changing distance between km and mph
             SettingsToggleButtons(
               icon: Icons.speed,

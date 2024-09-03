@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../settings/logic/bools.dart';
 import '../settings/screens/settings.dart';
@@ -27,7 +28,7 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
 
   final List<FlSpot> _speedData = [];
 
-  Location location = Location();
+  // Location location = Location();
 
   @override
   void initState() {
@@ -37,40 +38,95 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
 
   Future<void> _initializeLocationService() async {
     try {
-      bool serviceEnabled;
-      PermissionStatus permissionGranted;
-
-      serviceEnabled = await location.serviceEnabled();
+      // Ensure location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        serviceEnabled = await location.requestService();
-        if (!serviceEnabled) {
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                title: const Text('Location Service Disabled'),
+                content: const Text(
+                    'Please enable location services to use this app.'),
+                actions: [
+                  TextButton(
+                    onPressed: () async {
+                      await Geolocator.openLocationSettings();
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Open Settings'),
+                  ),
+                ],
+              );
+            });
+        return;
+      }
+
+      // Request permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          // Permissions are denied, next step to handle this
           return;
         }
       }
 
-      permissionGranted = await location.hasPermission();
-      if (permissionGranted == PermissionStatus.denied) {
-        permissionGranted = await location.requestPermission();
-        if (permissionGranted != PermissionStatus.granted) {
-          return;
-        }
+      if (permission == LocationPermission.deniedForever) {
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                title: const Text('Location Permission Denied'),
+                content: const Text(
+                    'Please enable location permissions to use this app.'),
+                actions: [
+                  TextButton(
+                    onPressed: () async {
+                      await Geolocator.openAppSettings();
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Open Settings'),
+                  ),
+                ],
+              );
+            });
+        return;
       }
 
-      location.changeSettings(accuracy: LocationAccuracy.high);
-
-      // Listen to location updates
-      location.onLocationChanged.listen((LocationData currentLocation) {
-        setState(() {
-          speed = currentLocation.speed ?? 0;
-          totalDistance += speed;
-          maxSpeed = max(maxSpeed, speed);
-          _speedData.add(FlSpot(_speedData.length.toDouble(), speed));
-          if (speed > 0) {
-            // startTime ??= DateTime.now();
-            totalTime += const Duration(seconds: 1);
-          }
-        });
+      Geolocator.getPositionStream(locationSettings: const LocationSettings())
+          .listen((Position? position) {
+        if (position == null) {
+          speed = 0;
+          return;
+        }
+        speed = position.speed;
+        totalDistance += speed;
+        maxSpeed = max(maxSpeed, speed);
+        _speedData.add(FlSpot(_speedData.length.toDouble(), speed));
+        if (speed > 0) {
+          // startTime ??= DateTime.now();
+          totalTime += const Duration(seconds: 1);
+        }
       });
+
+      // location.changeSettings(accuracy: LocationAccuracy.high);
+
+      // // Listen to location updates
+      // location.onLocationChanged.listen((LocationData currentLocation) {
+      //   setState(() {
+      //     speed = currentLocation.speed ?? 0;
+      //     totalDistance += speed;
+      //     maxSpeed = max(maxSpeed, speed);
+      //     _speedData.add(FlSpot(_speedData.length.toDouble(), speed));
+      //     if (speed > 0) {
+      //       // startTime ??= DateTime.now();
+      //       totalTime += const Duration(seconds: 1);
+      //     }
+      //   });
+      // });
     } catch (e) {
       print('Error: $e');
     }
