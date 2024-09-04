@@ -3,21 +3,24 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../settings/logic/bools.dart';
-import '../settings/screens/settings.dart';
+import '../settings/logic/statistics.dart';
+import '../settings/screens/settings_screen.dart';
 import 'speed_chart.dart';
 import 'speedometer.dart';
 
-class LocationServiceWidget extends StatefulWidget {
+class LocationServiceWidget extends ConsumerStatefulWidget {
   const LocationServiceWidget({super.key});
 
   @override
-  State<LocationServiceWidget> createState() => _LocationServiceWidgetState();
+  ConsumerState<LocationServiceWidget> createState() =>
+      _LocationServiceWidgetState();
 }
 
-class _LocationServiceWidgetState extends State<LocationServiceWidget> {
+class _LocationServiceWidgetState extends ConsumerState<LocationServiceWidget> {
   // Tracker variables
   double speed = 0; // M/s
   double totalDistance = 0; // Meters
@@ -96,7 +99,9 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
         return;
       }
 
-      Geolocator.getPositionStream(locationSettings: const LocationSettings())
+      Geolocator.getPositionStream(
+              locationSettings:
+                  const LocationSettings(accuracy: LocationAccuracy.best))
           .listen((Position? position) {
         if (position == null) {
           speed = 0;
@@ -112,6 +117,13 @@ class _LocationServiceWidgetState extends State<LocationServiceWidget> {
             count++;
           }
         });
+        // Update lifetime statistics
+        ref
+            .read(lifetimeDistanceProvider.notifier)
+            .updateValue(ref.read(lifetimeDistanceProvider) + speed);
+        ref
+            .read(lifetimeTopSpeedProvider.notifier)
+            .updateValue(max(ref.read(lifetimeTopSpeedProvider), maxSpeed));
       });
 
       // location.changeSettings(accuracy: LocationAccuracy.high);

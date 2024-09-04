@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../logic/bools.dart';
 import '../logic/themes.dart';
 import '../widgets/buttons.dart';
+import 'statistics_screen.dart';
 
 List<bool> _getThemeModeBools(ThemeMode selectedThemeMode) {
   return List.generate(ThemeMode.values.length, (index) {
@@ -88,6 +89,20 @@ class SettingsScreen extends ConsumerWidget {
               onPressed: (context) async {
                 await launchUrl(
                     Uri.parse('https://github.com/Blasix/speedometer'));
+              },
+            ),
+            SettingsButton(
+              icon: const Icon(
+                Icons.bar_chart,
+                size: 30,
+              ),
+              text: 'Statistics',
+              onPressed: (context) {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) {
+                    return const StatisticsScreen();
+                  },
+                ));
               },
             ),
             // SettingsButton(
