@@ -90,6 +90,17 @@ class SettingsScreen extends ConsumerWidget {
                     Uri.parse('https://github.com/Blasix/speedometer'));
               },
             ),
+            SettingsButton(
+              icon: const Icon(
+                Icons.privacy_tip_outlined,
+                size: 30,
+              ),
+              text: 'Privacy Policy',
+              onPressed: (context) async {
+                await launchUrl(
+                    Uri.parse('https://speedometer.blasix.com/privacy'));
+              },
+            ),
             // SettingsButton(
             //   icon: Container(
             //     margin: const EdgeInsets.all(3),
@@ -155,7 +166,7 @@ class SettingsScreen extends ConsumerWidget {
             SettingsToggleButtons(
                 icon: Theme.of(context).brightness == Brightness.light
                     ? Icons.wb_sunny_outlined
-                    : Icons.dark_mode,
+                    : Icons.dark_mode_outlined,
                 text: "Theme",
                 isSelected: _getThemeModeBools(themeMode),
                 children: const [
